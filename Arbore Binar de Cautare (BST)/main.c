@@ -65,6 +65,7 @@ void parcurgerePostordineArbore(Nod* radacina) {
 	if (radacina) {
 		parcurgerePostordineArbore(radacina->stanga);
 		parcurgerePostordineArbore(radacina->dreapta);
+		afisareExamen(radacina->info);
 	}
 }
 
