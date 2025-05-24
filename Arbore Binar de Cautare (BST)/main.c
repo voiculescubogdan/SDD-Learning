@@ -149,7 +149,7 @@ Examen extragereDinArbore(Nod** radacina, int id) {
 	Examen examen = cautareById(*radacina, id);
 	// 2) dacă există, îl şterg
 	if (examen.id != -1) {
-		stergereDinArbore(radacina, id);
+		stergereDinArbore(&(*radacina), id);
 	}
 	return examen;
 }
