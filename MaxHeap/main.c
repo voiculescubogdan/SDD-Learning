@@ -39,6 +39,7 @@ void traversareMaxHeap(MaxHeap heap) {
 	}
 }
 
+// aici se face MaxHeap ul, adica filtreaza toate examenele in ordine descrescatoare
 void filtrareMaxHeap(MaxHeap heap, int index) {
 	if (heap.dim > 0) {
 		int pozMax = index;
@@ -65,6 +66,10 @@ void filtrareMaxHeap(MaxHeap heap, int index) {
 	}
 }
 
+// se scoate din MaxHeap radacina (adica cel mai mare examen)
+// se inlocuieste cu ultimul examen pentru a putea fi scos mai usor
+// se reduce dimensiunea cu 1
+// se filtreaza noul heap
 void extragereMaxHeap(MaxHeap* heap, Examen* examen) {
 	*examen = initExamen(heap->vector[0].nrCredite, heap->vector[0].materie, heap->vector[0].nota);
 	Examen aux = heap->vector[0];
@@ -74,6 +79,9 @@ void extragereMaxHeap(MaxHeap* heap, Examen* examen) {
 	filtrareMaxHeap(*heap, 0);
 }
 
+// se face loc pentru un nou examen in heap
+// noul examen este adaugat la sfarsit
+// dupa ce este adaugat, se filtreaza noul heap
 void inserareMaxHeap(MaxHeap* heap, Examen examen) {
 	heap->vector = realloc(heap->vector, sizeof(Examen) * (heap->dim + 1));
 	heap->vector[heap->dim] = examen;
@@ -106,12 +114,15 @@ void afisareFrunze(MaxHeap heap) {
 }
 
 // stergem toate elementele care au nota < 5
-void stergeDinMaxHeap(MaxHeap* mHeap) {
+// se face un nou heap temporar care va tine doar examenele cu nota mai mare decat 5
+// dupa se modifica heap ul initial cu acesta temporar
+// la final se filtreaza noul heap
+void stergeDinMaxHeap(MaxHeap* mHeap, float notaCriteriu) {
 	Examen* temp = (Examen*)malloc(sizeof(Examen) * mHeap->dim);
 	int newDim = 0;
 
 	for (int i = 0; i < mHeap->dim; i++) {
-		if (mHeap->vector[i].nota < 5.0f) {
+		if (mHeap->vector[i].nota < notaCriteriu) {
 			free(mHeap->vector[i].materie);
 		}
 		else {
@@ -182,7 +193,7 @@ void main() {
 
 	printf("\n\nDupa stergerea examenelor cu nota < 5:");
 
-	stergeDinMaxHeap(&heap);
+	stergeDinMaxHeap(&heap, 5.0f);
 	traversareMaxHeap(heap);
 
 	dezalocareMaxHeap(heap);
