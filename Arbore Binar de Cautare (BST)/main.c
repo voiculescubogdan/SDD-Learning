@@ -186,6 +186,19 @@ Examen extragereDinArbore(Nod** radacina, int id) {
 	return examen;
 }
 
+void updateInBST(Nod** radacina, float criteriu) {
+
+	if (*radacina) {
+		updateInBST(&(*radacina)->stanga, criteriu);
+		updateInBST(&(*radacina)->dreapta, criteriu);
+
+		if ((*radacina)->info.nota < criteriu) {
+			(*radacina)->info.nota = 6.66;
+		}
+	}
+	
+}
+
 // verifica daca are copil in stanga si in dreapta
 // daca nu are, inseamna ca este frunza
 // daca are, se reia procesul
@@ -255,6 +268,10 @@ void main() {
 	Examen examenExtras;
 	examenExtras = extragereDinArbore(&radacina, 4);
 	afisareExamen(examenExtras);
+
+	printf("\n\nDupa update pentru notele mai mici decat 5");
+	updateInBST(&radacina, 5.0f);
+	parcurgerePostordineArbore(radacina);
 
 	dezalocare(&radacina);
 }
