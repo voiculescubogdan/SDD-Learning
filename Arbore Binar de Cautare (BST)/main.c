@@ -249,6 +249,30 @@ void mediaNotelorLaAceeasiMaterie(Nod* radacina, char* materie, float* sum, int*
 	
 }
 
+void functieExameneAdmise(Nod* radacina, Examen** vectorExamen, float notaCriteriu, int* nr) {
+	
+	if (!radacina) return;
+
+	if (radacina) {
+
+		functieExameneAdmise(radacina->stanga, vectorExamen, notaCriteriu, nr);
+		functieExameneAdmise(radacina->dreapta, vectorExamen, notaCriteriu, nr);
+
+		if (radacina->info.nota >= notaCriteriu) {
+			*vectorExamen = (Examen*)realloc(*vectorExamen, sizeof(Examen) * ((*nr) + 1));
+			(*vectorExamen)[*nr] = radacina->info;
+			(*nr) += 1;
+		}
+	}
+}
+
+Examen* vectorExameneAdmise(Nod* radacina, float notaCriteriu, int* nr) {
+	Examen* vector = NULL;
+	*nr = 0;
+	functieExameneAdmise(radacina, &vector, notaCriteriu, nr);
+	return vector;
+}
+
 // verifica daca are copil in stanga si in dreapta
 // daca nu are, inseamna ca este frunza
 // daca are, se reia procesul
@@ -331,6 +355,13 @@ void main() {
 
 	printf("\n\nSterge nod radacina: ");
 	stergeNodRadacina(&radacina);
+
+	printf("\n\nVector examene cu nota peste 5: ");
+	int nr = 0;
+	Examen* vectorExamen = vectorExameneAdmise(radacina, 5.0f, &nr);
+	for (int i = 0; i < nr; i++) {
+		afisareExamen(vectorExamen[i]);
+	}
 
 	dezalocare(&radacina);
 }
