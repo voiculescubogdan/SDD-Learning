@@ -136,14 +136,6 @@ void inserareMaxHeap(MaxHeap* heap, Examen examen) {
 	}
 }
 
-void afisareFrunze(MaxHeap heap) {
-	int primaFrunza = heap.dim / 2;
-
-	for (int i = primaFrunza; i < heap.dim; i++) {
-		afisareExamen(heap.vector[i]);
-	}
-}
-
 // stergem toate elementele care au nota < 5
 // se face un nou heap temporar care va tine doar examenele cu nota mai mare decat 5
 // dupa se modifica heap ul initial cu acesta temporar
@@ -170,6 +162,30 @@ void stergeDinMaxHeap(MaxHeap* mHeap, float notaCriteriu) {
 	}
 }
 
+void updateInMaxHeap(MaxHeap* heap, char* materie) {
+	for (int i = 0; i < heap->dim; i++) {
+
+		if (strcmp(heap->vector[i].materie, materie) == 0) {
+			heap->vector[i].nota = 6.6f;
+		}
+	}
+}
+
+void cautareInMaxHeap(MaxHeap heap, float criteriu) {
+	for (int i = 0; i < heap.dim; i++) {
+		if (heap.vector[i].nota < criteriu) {
+			afisareExamen(heap.vector[i]);
+		}
+	}
+}
+
+void afisareFrunze(MaxHeap heap) {
+	int primaFrunza = heap.dim / 2;
+
+	for (int i = primaFrunza; i < heap.dim; i++) {
+		afisareExamen(heap.vector[i]);
+	}
+}
 
 void dezalocareMaxHeap(MaxHeap heap) {
 	for (int i = 0; i < heap.dim; i++) {
@@ -233,13 +249,20 @@ void main() {
 	extragereMaxHeap(&heap, &examen);
 	afisareExamen(examen);
 
-	printf("\n\nAfisare frunze: ");
-	afisareFrunze(heap);
-
 	printf("\n\nDupa stergerea examenelor cu nota < 5:");
 
 	stergeDinMaxHeap(&heap, 5.0f);
 	traversareMaxHeap(heap);
+
+	printf("\n\nAfisare frunze: ");
+	afisareFrunze(heap);
+
+	printf("\n\nUpdate in MaxHeap: ");
+	updateInMaxHeap(&heap, "SDD");
+	traversareMaxHeap(heap);
+	
+	printf("\n\nCautare in MaxHeap: ");
+	cautareInMaxHeap(heap, 7.0f);
 
 	dezalocareMaxHeap(heap);
 }
