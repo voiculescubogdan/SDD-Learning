@@ -29,6 +29,37 @@ Examen initExamen(int id, char* materie, float nota) {
 	return examen;
 }
 
+// CITIRE DIN FISIER
+Examen citireExamen(FILE* file) {
+	Examen examen;
+	char buffer[100];
+
+	fgets(buffer, sizeof(buffer), file);
+	examen.id = atoi(buffer);
+
+	fgets(buffer, sizeof(buffer), file);
+	char* materie = strtok(buffer, "\n");
+	examen.materie = (char*)malloc(sizeof(char) * (strlen(materie) + 1));
+	strcpy(examen.materie, materie);
+
+	fgets(buffer, sizeof(buffer), file);
+	examen.nota = atof(buffer);
+
+	return examen;
+}
+
+void citireVectorExamene(FILE* file, Examen** vectorExamene, int* nrExamene) {
+	if (!file) {
+		return;
+	}
+
+	while (!feof(file)) {
+		*vectorExamene = (Examen*)realloc(*vectorExamene, sizeof(Examen) * ((*nrExamene) + 1));
+		(*vectorExamene)[*nrExamene] = citireExamen(file);
+		(*nrExamene)++;
+	}
+}
+
 void afisareExamen(Examen examen) {
 	printf("\nExamenul la materia %s, cu id-ul %d, are nota de trecere %.2f", examen.materie, examen.id, examen.nota);
 }
@@ -180,16 +211,27 @@ void dezalocare(Nod** radacina) {
 }
 
 void main() {
-	Nod* radacina = NULL;
+	// Nod* radacina = NULL;
 
-	inserareBST(&radacina, initExamen(7, "SDD", 5));
-	inserareBST(&radacina, initExamen(4, "PAW", 5));
-	inserareBST(&radacina, initExamen(9, "PEAG", 5));
-	inserareBST(&radacina, initExamen(3, "JAVA", 5));
-	inserareBST(&radacina, initExamen(5, "MACRO", 5));
-	inserareBST(&radacina, initExamen(8, "POO", 5));
-	inserareBST(&radacina, initExamen(2, "ATP", 5));
-	inserareBST(&radacina, initExamen(1, "SGBD", 5));
+	// inserareBST(&radacina, initExamen(7, "SDD", 5));
+	// inserareBST(&radacina, initExamen(4, "PAW", 5));
+	// inserareBST(&radacina, initExamen(9, "PEAG", 5));
+	// inserareBST(&radacina, initExamen(3, "JAVA", 5));
+	// inserareBST(&radacina, initExamen(5, "MACRO", 5));
+	// inserareBST(&radacina, initExamen(8, "POO", 5));
+	// inserareBST(&radacina, initExamen(2, "ATP", 5));
+	// inserareBST(&radacina, initExamen(1, "SGBD", 5));
+
+	FILE* file = fopen("arbore.txt", "r");
+	Examen* vectorExamene = NULL;
+	int nrExamene = 0;
+	citireVectorExamene(file, &vectorExamene, &nrExamene);
+	
+	Nod* radacina = NULL;
+	
+	for (int i = 0; i < nrExamene; i++) {
+		inserareBST(&radacina, vectorExamene[i]);
+	}
 
 	printf("\n\nParcurgere inordine arbore: ");
 	parcurgereInordineArbore(radacina);
