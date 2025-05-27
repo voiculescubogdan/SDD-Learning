@@ -176,6 +176,40 @@ void stergereDinArbore(Nod** radacina, int id) {
 	}
 }
 
+void stergeNodRadacina(Nod** radacina) {
+
+	if (radacina) {
+
+		Nod* parent = *radacina;
+		Nod* fiu = parent->dreapta;
+
+		while (fiu->stanga) {
+			parent = fiu;
+			fiu = fiu->stanga;
+		}
+
+		free((*radacina)->info.materie);
+		(*radacina)->info.id = fiu->info.id;
+		(*radacina)->info.nota = fiu->info.nota;
+		(*radacina)->info.materie = (char*)malloc(sizeof(char) * (strlen(fiu->info.materie) + 1));
+		strcpy((*radacina)->info.materie, fiu->info.materie);
+
+		Nod* subarb = fiu->dreapta;
+
+		if (parent->stanga == fiu) {
+			parent->stanga = subarb;
+		}
+		else {
+			parent->dreapta = subarb;
+		}
+
+		free(fiu->info.materie);
+		free(fiu);
+
+		parcurgerePostordineArbore(*radacina);
+	}
+}
+
 Examen extragereDinArbore(Nod** radacina, int id) {
 	// 1) întâi găsesc examenul
 	Examen examen = cautareById(*radacina, id);
@@ -294,6 +328,9 @@ void main() {
 	int count = 0;
 	mediaNotelorLaAceeasiMaterie(radacina, "SDD", &sum, &count);
 	printf("\n\nMedia notelor: %.2f", sum/count);
+
+	printf("\n\nSterge nod radacina: ");
+	stergeNodRadacina(&radacina);
 
 	dezalocare(&radacina);
 }
