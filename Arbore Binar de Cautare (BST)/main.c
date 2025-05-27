@@ -199,6 +199,22 @@ void updateInBST(Nod** radacina, float criteriu) {
 	
 }
 
+void mediaNotelorLaAceeasiMaterie(Nod* radacina, char* materie, float* sum, int* count) {
+
+	if (!radacina) return;
+
+	if (radacina) {
+		mediaNotelorLaAceeasiMaterie(radacina->stanga, materie, sum, count);
+		mediaNotelorLaAceeasiMaterie(radacina->dreapta, materie, sum, count);
+
+		if (strcmp(radacina->info.materie, materie) == 0) {
+			*count += 1;
+			*sum += radacina->info.nota;
+		}
+	}
+	
+}
+
 // verifica daca are copil in stanga si in dreapta
 // daca nu are, inseamna ca este frunza
 // daca are, se reia procesul
@@ -272,6 +288,12 @@ void main() {
 	printf("\n\nDupa update pentru notele mai mici decat 5");
 	updateInBST(&radacina, 5.0f);
 	parcurgerePostordineArbore(radacina);
+
+	printf("\n\nMedia notelor cu aceeasi materie: ");
+	float sum = 0.0;
+	int count = 0;
+	mediaNotelorLaAceeasiMaterie(radacina, "SDD", &sum, &count);
+	printf("\n\nMedia notelor: %.2f", sum/count);
 
 	dezalocare(&radacina);
 }
