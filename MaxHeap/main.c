@@ -29,6 +29,37 @@ Examen initExamen(int nrCredite, char* materie, float nota) {
 	return examen;
 }
 
+// CITIRE DIN FISIER
+Examen citireExamen(FILE* file) {
+	Examen examen;
+	char buffer[100];
+
+	fgets(buffer, sizeof(buffer), file);
+	examen.nrCredite = atoi(buffer);
+
+	fgets(buffer, sizeof(buffer), file);
+	char* materie = strtok(buffer, "\n");
+	examen.materie = (char*)malloc(sizeof(char) * (strlen(materie) + 1));
+	strcpy(examen.materie, materie);
+
+	fgets(buffer, sizeof(buffer), file);
+	examen.nota = atof(buffer);
+
+	return examen;
+}
+
+void citireVectorExamene(FILE* file, Examen** vectorExamen, int* nrExamene) {
+	if (file == NULL) {
+		return;
+	}
+
+	while (!feof(file)) {
+		*vectorExamen = (Examen*)realloc(*vectorExamen, sizeof(Examen) * ((*nrExamene) + 1));
+		(*vectorExamen)[*nrExamene] = citireExamen(file);
+		(*nrExamene)++;
+	}
+}
+
 void afisareExamen(Examen examen) {
 	printf("\nExamenul la materia %s, avand %d numar de credite, se trece cu nota %.2f", examen.materie, examen.nrCredite, examen.nota);
 }
@@ -150,7 +181,21 @@ void dezalocareMaxHeap(MaxHeap heap) {
 
 void main() {
 
-	// DE FACUT SI PENTRU CITIRE DIN FISIERE TEXT
+	// CITIRE DIN FISIER
+	FILE* file = fopen("fisier.txt", "r");
+	Examen* vectorExamene = NULL;
+	int nrExamene = 0;
+	citireVectorExamene(file, &vectorExamene, &nrExamene);
+	
+	MaxHeap heap;
+	heap.dim = nrExamene;
+	heap.vector = (Examen*)malloc(sizeof(Examen) * heap.dim);
+	
+	for (int i = 0; i < nrExamene; i++) {
+		heap.vector[i] = vectorExamene[i];
+	}
+	
+	fclose(file);
 
 	MaxHeap heap;
 	heap.dim = 6;
