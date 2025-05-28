@@ -296,6 +296,27 @@ Examen* functieExtragereElemente(Nod** radacina, int* nrElemente, int idCriteriu
 	return vector;
 }
 
+// conversie la vector
+void conversieLaVector(Nod* radacina, Examen** vectorConversie, int* nrElem) {
+	if (!radacina) return;
+
+	if (radacina) {
+		conversieLaVector(radacina->stanga, vectorConversie, nrElem);
+		conversieLaVector(radacina->dreapta, vectorConversie, nrElem);
+
+		*vectorConversie = (Examen*)realloc(*vectorConversie, sizeof(Examen) * ((*nrElem) + 1));
+		(*vectorConversie)[*nrElem] = radacina->info;
+		(*nrElem)++;
+	}
+}
+
+Examen* vectorConversie(Nod* radacina, int* nrElem) {
+	Examen* vector = NULL;
+	*nrElem = 0;
+	conversieLaVector(radacina, &vector, nrElem);
+	return vector;
+}
+
 // verifica daca are copil in stanga si in dreapta
 // daca nu are, inseamna ca este frunza
 // daca are, se reia procesul
@@ -392,6 +413,14 @@ void main() {
 	vectorElemente = functieExtragereElemente(&radacina, &nrElemente, 4);
 	for (int i = 0; i < nrElemente; i++) {
 		afisareExamen(vectorElemente[i]);
+	}
+
+	printf("\n\nConversie la vector: ");
+	Examen* vector = NULL;
+	int nrElem = 0;
+	vector = vectorConversie(radacina, &nrElem);
+	for (int i = 0; i < nrElem; i++) {
+		afisareExamen(vector[i]);
 	}
 
 	dezalocare(&radacina);
