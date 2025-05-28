@@ -273,6 +273,29 @@ Examen* vectorExameneAdmise(Nod* radacina, float notaCriteriu, int* nr) {
 	return vector;
 }
 
+// extrage mai multe elemente dupa un criteriu intr-un vector
+void extrageElementeById(Nod** radacina, Examen** vectorElemente, int* nrElemente, int idCriteriu) {
+	if (!(*radacina)) return;
+
+	if (*radacina) {
+		extrageElementeById(&(*radacina)->stanga, vectorElemente, nrElemente, idCriteriu);
+		extrageElementeById(&(*radacina)->dreapta, vectorElemente, nrElemente, idCriteriu);
+
+		if ((*radacina)->info.id < idCriteriu) {
+			*vectorElemente = (Examen*)realloc(*vectorElemente, sizeof(Examen) * ((*nrElemente) + 1));
+			(*vectorElemente)[*nrElemente] = extrageDinBST(radacina, (*radacina)->info.id);
+			(*nrElemente)++;
+		}
+	}
+}
+
+Examen* functieExtragereElemente(Nod** radacina, int* nrElemente, int idCriteriu) {
+	Examen* vector = NULL;
+	*nrElemente = 0;
+	extrageElementeById(radacina, &vector, nrElemente, idCriteriu);
+	return vector;
+}
+
 // verifica daca are copil in stanga si in dreapta
 // daca nu are, inseamna ca este frunza
 // daca are, se reia procesul
@@ -361,6 +384,14 @@ void main() {
 	Examen* vectorExamen = vectorExameneAdmise(radacina, 5.0f, &nr);
 	for (int i = 0; i < nr; i++) {
 		afisareExamen(vectorExamen[i]);
+	}
+
+	printf("\n\nExtragere elemente cu id < 4 intr-un vector: ");
+	Examen* vectorElemente = NULL;
+	int nrElemente = 0;
+	vectorElemente = functieExtragereElemente(&radacina, &nrElemente, 4);
+	for (int i = 0; i < nrElemente; i++) {
+		afisareExamen(vectorElemente[i]);
 	}
 
 	dezalocare(&radacina);
