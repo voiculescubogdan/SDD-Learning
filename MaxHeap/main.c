@@ -18,6 +18,23 @@ struct MaxHeap {
 	int dim;
 };
 
+// pentru conversie la lista simpla
+typedef struct NodSimplu NodSimplu;
+
+struct NodSimplu {
+	Examen info;
+	NodSimplu* next;
+};
+
+// pentru conversie la lista dubla
+typedef struct LDI LDI;
+
+struct LDI {
+	Examen info;
+	LDI* next;
+	LDI* prev;
+};
+
 Examen initExamen(int nrCredite, char* materie, float nota) {
 	Examen examen;
 
@@ -274,6 +291,72 @@ Examen* apelConversieLaVector(MaxHeap heap, int* nrElemente) {
 	return vector;
 }
 
+// conversie la lista simpla
+void conversieLaListaSimpla(MaxHeap heap, NodSimplu** cap) {
+	if (heap.dim > 0) {
+
+		for (int i = 0; i < heap.dim; i++) {
+
+			NodSimplu* nou = (NodSimplu*)malloc(sizeof(NodSimplu));
+			nou->info = heap.vector[i];
+			nou->next = *cap;
+			*cap = nou;
+
+		}
+
+	}
+}
+
+NodSimplu* apelConversieLaListaSimpla(MaxHeap heap) {
+	NodSimplu* cap = NULL;
+	conversieLaListaSimpla(heap, &cap);
+	return cap;
+}
+
+void afisareListaSimpla(NodSimplu* cap) {
+	while (cap) {
+		afisareExamen(cap->info);
+		cap = cap->next;
+	}
+}
+
+// conversie la lista dubla
+void conversieLaListaDubla(MaxHeap heap, LDI** cap, LDI** coada) {
+	if (heap.dim > 0) {
+
+		for (int i = 0; i < heap.dim; i++) {
+
+			LDI* nou = (LDI*)malloc(sizeof(LDI));
+			nou->info = heap.vector[i];
+			nou->prev = *coada;
+			nou->next = NULL;
+
+			if (*cap == NULL) {
+				*cap = *coada = nou;
+			}
+			else {
+				(*coada)->next = nou;
+				*coada = nou;
+			}
+
+		}
+	}
+}
+
+LDI* apelConversieLaListaDubla(MaxHeap heap) {
+	LDI* cap = NULL;
+	LDI* coada = NULL;
+	conversieLaListaDubla(heap, &cap, &coada);
+	return cap;
+}
+
+void afisareListaDubla(LDI* cap) {
+	while (cap) {
+		afisareExamen(cap->info);
+		cap = cap->next;
+	}
+}
+
 void afisareFrunze(MaxHeap heap) {
 	int primaFrunza = heap.dim / 2;
 
@@ -398,6 +481,16 @@ void main() {
 	for (int i = 0; i < nrElemente; i++) {
 		afisareExamen(vectorConversie[i]);
 	}
+
+	printf("\n\nConversie la lista simpla: ");
+	NodSimplu* cap = NULL;
+	cap = apelConversieLaListaSimpla(heap);
+	afisareListaSimpla(cap);
+	
+	printf("\n\nConversie la lista dubla: ");
+	LDI* cap = NULL;
+	cap = apelConversieLaListaDubla(heap);
+	afisareListaDubla(cap);
 
 	dezalocareMaxHeap(heap);
 }
