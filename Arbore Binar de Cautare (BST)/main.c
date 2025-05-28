@@ -19,6 +19,15 @@ struct Nod {
 	Nod* dreapta;
 };
 
+// pentru conversie la lista dubla
+typedef struct LDI LDI;
+
+struct LDI {
+	Examen info;
+	LDI* prev;
+	LDI* next;
+};
+
 Examen initExamen(int id, char* materie, float nota) {
 	Examen examen;
 	examen.id = id;
@@ -317,6 +326,36 @@ Examen* vectorConversie(Nod* radacina, int* nrElem) {
 	return vector;
 }
 
+// conversie la lista dubla
+void conversieListaDubla(Nod* radacina, LDI** cap, LDI** coada) {
+	if (!radacina) return;
+
+	if (radacina) {
+		conversieListaDubla(radacina->stanga, cap, coada);
+		conversieListaDubla(radacina->dreapta, cap, coada);
+
+		LDI* nou = (LDI*)malloc(sizeof(LDI));
+		nou->info = radacina->info;
+		nou->prev = *coada;
+		nou->next = NULL;
+
+		if (*cap == NULL) {
+			*cap = *coada = nou;
+		}
+		else {
+			(*coada)->next = nou;
+			*coada = nou;
+		}
+	}
+}
+
+LDI* listaDublaConversie(Nod* radacina) {
+	LDI* cap = NULL;
+	LDI* coada = NULL;
+	conversieListaDubla(radacina, &cap, &coada);
+	return cap;
+}
+
 // verifica daca are copil in stanga si in dreapta
 // daca nu are, inseamna ca este frunza
 // daca are, se reia procesul
@@ -422,6 +461,11 @@ void main() {
 	for (int i = 0; i < nrElem; i++) {
 		afisareExamen(vector[i]);
 	}
+
+	printf("\n\nConversie la lista dubla: ");
+	LDI* cap = NULL;
+	cap = listaDublaConversie(radacina);
+	afisareLista(cap);
 
 	dezalocare(&radacina);
 }
