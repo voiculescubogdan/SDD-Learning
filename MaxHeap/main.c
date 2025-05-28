@@ -136,6 +136,18 @@ void inserareMaxHeap(MaxHeap* heap, Examen examen) {
 	}
 }
 
+// pentru inserare repetata
+void inserareRepetataMaxHeap(MaxHeap* heap, Examen examen) {
+	heap->vector = (Examen*)realloc(heap->vector, sizeof(Examen) * (heap->dim + 1));
+	heap->vector[heap->dim] = examen;
+	heap->dim++;
+
+	// optional, se poate face si in main
+	for (int i = heap->dim / 2 - 1; i >= 0; i--) {
+		filtrareMaxHeap(*heap, i);
+	}
+}
+
 // stergem toate elementele care au nota < 5
 // se face un nou heap temporar care va tine doar examenele cu nota mai mare decat 5
 // dupa se modifica heap ul initial cu acesta temporar
@@ -269,6 +281,14 @@ void main() {
 	
 	for (int i = 0; i < nrExamene; i++) {
 		heap.vector[i] = vectorExamene[i];
+	}
+
+	// prin inserare repetata
+	MaxHeap heap;
+	heap.dim = 0;
+	heap.vector = NULL;
+	for (int i = 0; i < nrExameneCitire; i++) {
+		inserareRepetataMaxHeap(&heap, vectorExameneCitire[i]);
 	}
 	
 	fclose(file);
