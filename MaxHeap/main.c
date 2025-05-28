@@ -197,6 +197,21 @@ Examen* functieExameneAdmise(MaxHeap heap, int* nrExamene) {
 	return vector;
 }
 
+// extrage orice nod dupa un criteriu
+void extrageDupaNrCredite(MaxHeap* heap, int nrCredite, Examen* examen) {
+	for (int i = 0; i < heap->dim; i++) {
+		if (heap->vector[i].nrCredite == nrCredite) {
+			*examen = initExamen(heap->vector[i].nrCredite, heap->vector[i].materie, heap->vector[i].nota);
+			Examen aux = heap->vector[i];
+			heap->vector[i] = heap->vector[heap->dim - 1];
+			heap->vector[heap->dim - 1] = aux;
+			heap->dim--;
+			filtrareMaxHeap(*heap, i);
+			break;
+		}
+	}
+}
+
 void afisareFrunze(MaxHeap heap) {
 	int primaFrunza = heap.dim / 2;
 
@@ -289,6 +304,14 @@ void main() {
 	for (int i = 0; i < nrExamene; i++) {
 		afisareExamen(vectorExameneAdmise[i]);
 	}
+
+	printf("\n\nExtrage dupa nr de credite: ");
+	Examen examenExtras;
+	extrageDupaNrCredite(&heap, 5, &examenExtras);
+	afisareExamen(examenExtras);
+	
+	printf("\n\nTraversare MaxHeap dupa extragere: ");
+	traversareMaxHeap(heap);
 
 	dezalocareMaxHeap(heap);
 }
