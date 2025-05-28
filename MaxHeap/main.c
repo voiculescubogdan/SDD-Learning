@@ -251,6 +251,29 @@ Examen* functieExtragereDupaNote(MaxHeap* heap, float notaCriteriu, int* nr) {
 	return vector;
 }
 
+// conversie la vector
+void conversieLaVector(MaxHeap heap, Examen** vectorConversie, int* nrElemente) {
+	if (heap.dim > 0) {
+
+		for (int i = 0; i < heap.dim; i++) {
+
+			*vectorConversie = (Examen*)realloc(*vectorConversie, sizeof(Examen) * ((*nrElemente) + 1));
+			(*vectorConversie)[*nrElemente] = heap.vector[i];
+			(*nrElemente)++;
+
+		}
+
+	}
+
+}
+
+Examen* apelConversieLaVector(MaxHeap heap, int* nrElemente) {
+	Examen* vector = NULL;
+	*nrElemente = 0;
+	conversieLaVector(heap, &vector, nrElemente);
+	return vector;
+}
+
 void afisareFrunze(MaxHeap heap) {
 	int primaFrunza = heap.dim / 2;
 
@@ -366,6 +389,14 @@ void main() {
 	examene = functieExtragereDupaNote(&heap, 5.0f, &nr);
 	for (int i = 0; i < nr; i++) {
 		afisareExamen(examene[i]);
+	}
+
+	printf("\n\nConversie la vector: ");
+	Examen* vectorConversie = NULL;
+	int nrElemente = 0;
+	vectorConversie = apelConversieLaVector(heap, &nrElemente);
+	for (int i = 0; i < nrElemente; i++) {
+		afisareExamen(vectorConversie[i]);
 	}
 
 	dezalocareMaxHeap(heap);
