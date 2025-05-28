@@ -212,6 +212,33 @@ void extrageDupaNrCredite(MaxHeap* heap, int nrCredite, Examen* examen) {
 	}
 }
 
+// extragere de mai multe elemente intr-un vector
+void extrageDupaNota(MaxHeap* heap, Examen** vectorEx, float notaCriteriu, int* nr) {
+	for (int i = 0; i < heap->dim; i++) {
+		if (heap->vector[i].nota > notaCriteriu) {
+			*vectorEx = (Examen*)realloc(*vectorEx, sizeof(Examen) * ((*nr) + 1));
+			(*vectorEx)[*nr] = heap->vector[i];
+			(*nr) += 1;
+
+			Examen aux = heap->vector[i];
+			heap->vector[i] = heap->vector[heap->dim - 1];
+			heap->vector[heap->dim - 1] = aux;
+			heap->dim--;
+			filtrareMaxHeap(*heap, i);
+			// daca s-a gasit un element de bagat in vector, vreau sa se mentina index-ul pentru a verifica
+			// si urmatorul element care se muta pe acelasi index
+			i--; //pentru a nu sari peste elemente
+		}
+	}
+}
+
+Examen* functieExtragereDupaNote(MaxHeap* heap, float notaCriteriu, int* nr) {
+	Examen* vector = NULL;
+	*nr = 0;
+	extrageDupaNota(heap, &vector, notaCriteriu, nr);
+	return vector;
+}
+
 void afisareFrunze(MaxHeap heap) {
 	int primaFrunza = heap.dim / 2;
 
@@ -312,6 +339,14 @@ void main() {
 	
 	printf("\n\nTraversare MaxHeap dupa extragere: ");
 	traversareMaxHeap(heap);
+
+	printf("\n\nExtragere mai multe examene dupa nota: ");
+	Examen* examene;
+	int nr = 0;
+	examene = functieExtragereDupaNote(&heap, 5.0f, &nr);
+	for (int i = 0; i < nr; i++) {
+		afisareExamen(examene[i]);
+	}
 
 	dezalocareMaxHeap(heap);
 }
