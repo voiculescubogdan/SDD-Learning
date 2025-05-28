@@ -179,6 +179,24 @@ void cautareInMaxHeap(MaxHeap heap, float criteriu) {
 	}
 }
 
+// cautare examene cu nota > 5 si bagate intr-un vector separat
+void cautareByNota(MaxHeap heap, Examen** vectorExamene, int* nrExamene) {
+	for (int i = 0; i < heap.dim; i++) {
+		if (heap.vector[i].nota > 5.0f) {
+			*vectorExamene = (Examen*)realloc(*vectorExamene, sizeof(Examen) * ((*nrExamene) + 1));
+			(*vectorExamene)[*nrExamene] = heap.vector[i];
+			(*nrExamene) += 1;
+		}
+	}
+}
+
+Examen* functieExameneAdmise(MaxHeap heap, int* nrExamene) {
+	Examen* vector = NULL;
+	*nrExamene = 0;
+	cautareByNota(heap, &vector, nrExamene);
+	return vector;
+}
+
 void afisareFrunze(MaxHeap heap) {
 	int primaFrunza = heap.dim / 2;
 
@@ -263,6 +281,14 @@ void main() {
 	
 	printf("\n\nCautare in MaxHeap: ");
 	cautareInMaxHeap(heap, 7.0f);
+
+	printf("\n\nCautare examene cu nota peste 5 si bagate intr un vector: ");
+	Examen* vectorExameneAdmise;
+	int nrExamene = 0;
+	vectorExameneAdmise = functieExameneAdmise(heap, &nrExamene);
+	for (int i = 0; i < nrExamene; i++) {
+		afisareExamen(vectorExameneAdmise[i]);
+	}
 
 	dezalocareMaxHeap(heap);
 }
