@@ -35,6 +35,22 @@ struct LDI {
 	LDI* prev;
 };
 
+// pentru conversie la stiva
+typedef struct Stiva Stiva;
+
+struct Stiva {
+	Examen info;
+	Stiva* next;
+};
+
+// pentru conversie la coada
+typedef struct Coada Coada;
+
+struct Coada {
+	Examen info;
+	Coada* next;
+};
+
 Examen initExamen(int nrCredite, char* materie, float nota) {
 	Examen examen;
 
@@ -357,6 +373,108 @@ void afisareListaDubla(LDI* cap) {
 	}
 }
 
+// conversie la stiva
+void conversieLaStiva(MaxHeap heap, Stiva** cap) {
+	if (heap.dim > 0) {
+
+		for (int i = 0; i < heap.dim; i++) {
+
+			Stiva* nou = (Stiva*)malloc(sizeof(Stiva));
+			nou->info = heap.vector[i];
+			nou->next = *cap;
+			*cap = nou;
+
+		}
+	}
+}
+
+Stiva* apelConversieLaStiva(MaxHeap heap) {
+	Stiva* cap = NULL;
+	conversieLaStiva(heap, &cap);
+	return cap;
+}
+
+Examen pop(Stiva** cap) {
+	if (*cap == NULL) {
+		return initExamen(-1, "", 0.0);
+	}
+
+	Examen examen = (*cap)->info;
+
+	Stiva* temp = *cap;
+	*cap = (*cap)->next;
+
+	free(temp);
+	temp = NULL;
+
+	return examen;
+}
+
+void afisareStiva(Stiva* cap) {
+	Examen examen;
+	while (cap) {
+		examen = pop(&cap);
+		afisareExamen(examen);
+	}
+}
+
+// conversie la coada
+void conversieLaCoada(MaxHeap heap, Coada** coada) {
+	if (heap.dim > 0) {
+
+		for (int i = 0; i < heap.dim; i++) {
+
+			Coada* nou = (Coada*)malloc(sizeof(Coada));
+			nou->info = heap.vector[i];
+			nou->next = NULL;
+
+			if (*coada == NULL) {
+				*coada = nou;
+			}
+			else {
+				Coada* temp = *coada;
+				while (temp->next) {
+					temp = temp->next;
+				}
+
+				temp->next = nou;
+			}
+
+		}
+
+	}
+}
+
+Coada* apelConversieLaCoada(MaxHeap heap) {
+	Coada* coada = NULL;
+	conversieLaCoada(heap, &coada);
+	return coada;
+}
+
+Examen get(Coada** coada) {
+	if (*coada == NULL) {
+		return initExamen(-1, "", 0.0);
+	}
+
+	Examen examen = (*coada)->info;
+
+	Coada* temp = *coada;
+	*coada = (*coada)->next;
+
+	free(temp);
+	temp = NULL;
+
+	return examen;
+}
+
+void afisareCoada(Coada* coada) {
+	Examen examen;
+	while (coada) {
+		examen = get(&coada);
+		afisareExamen(examen);
+	}
+}
+
 void afisareFrunze(MaxHeap heap) {
 	int primaFrunza = heap.dim / 2;
 
@@ -491,6 +609,16 @@ void main() {
 	LDI* cap = NULL;
 	cap = apelConversieLaListaDubla(heap);
 	afisareListaDubla(cap);
+
+	printf("\n\nConversie la stiva: ");
+	Stiva* cap = NULL;
+	cap = apelConversieLaStiva(heap);
+	afisareStiva(cap);
+	
+	printf("\n\nConversie la coada: ");
+	Coada* coada = NULL;
+	coada = apelConversieLaCoada(heap);
+	afisareCoada(coada);
 
 	dezalocareMaxHeap(heap);
 }
